@@ -1,0 +1,14 @@
+Vào sudo nano /etc/dhcpcd.conf thêm các dòng bên dưới
+
+interface eth0
+
+static ip_address=192.168.137.10/24
+static routers=192.168.137.1
+static domain_name_servers=8.8.8.8 208.67.222.222
+
+#dhcp từ iphone
+interface wlan0
+
+static ip_address=172.20.10.10/28
+static routers=172.20.10.1
+static domain_name_servers=8.8.8.8 208.67.222.222
