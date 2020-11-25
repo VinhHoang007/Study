@@ -1,0 +1,99 @@
+import socket
+from gpiozero import Button
+from gtts import gTTS
+import os, string
+import pyaudio
+import wave, Record,time
+
+
+def setupclient():
+    
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)             
+    s.connect((host, port))
+    return s
+def record():
+    Record.record()
+    
+
+def recvFrServer(s):
+     
+    with open('./static/answer_server.wav', 'wb') as f:
+        
+        while True:
+            
+             
+            data = s.recv(1024)
+            #print('data=%s', (data))
+            try:
+                abs = data[-1].to_bytes(2, 'big').decode('utf-8')
+                 # print(abs)
+                if "d" in abs:
+                     break   
+            except:
+                 #print("khong decode")
+                pass
+            f.write(data)
+ 
+    f.close()
+    print('Successfully get the file froms server')
+     
+    os.system("mpg321 ./static/answer_server.wav")
+    
+
+def sendToServer19(s):
+    f = open('./static/question_client.wav','rb')
+    l = f.read(1024)
+    while(l):
+        s.send(l)
+        l = f.read(1024)
+    s.send(str.encode("19"))
+    f.close()
+    print('Done sending')
+    
+def sendToServer17(s):
+    f = open('./static/question_client.wav','rb')
+    l = f.read(1024)
+    while(l):
+        s.send(l)
+        l = f.read(1024)
+    s.send(str.encode("17"))
+    f.close()
+    print('Done sending')
+    
+    
+
+if __name__== "__main__":
+    
+    #host = '172.20.10.14'
+    host = '192.168.137.1'
+    port = 5560
+    button17 = Button(17)
+    button18 = Button(18)
+    button23 = Button(23)
+    
+    while(True):
+        
+        if button17.is_pressed:
+            
+            os.system("mpg321 ./static/gioithieu.mp3")
+        
+        if button18.is_pressed:
+            
+            os.system("mpg321 ./static/tuvankhoa2018.mp3")
+            s = setupclient()
+            record()
+            sendToServer17(s)
+            recvFrServer(s)
+        
+        if button23.is_pressed:
+            
+            os.system("mpg321 ./static/tuvankhoa2019.mp3")
+            s = setupclient()
+            record()
+            sendToServer19(s)
+            recvFrServer(s)
+    
+    
+    
+    
+
